@@ -590,9 +590,10 @@ classdef classKeithley2400 < handle
                 time(n1)    = nums(3);
 
                 if isgraphics(ax,'axes')
-                    plot(ax,voltage(1:n1),current(1:n1))
+                    plot(ax,voltage(1:n1),abs(current(1:n1)))
                     xlabel(ax,'Voltage (V)')
                     ylabel(ax,'Current (A)')
+					set(ax, 'YScale', 'log')
                 elseif isstruct(ax) && isfield(ax,'update')
                     ax.update(voltage(1:n1),current(1:n1),'xlabel','Voltage (V)','ylabel','Current (A)')
                 end

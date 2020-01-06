@@ -7,7 +7,7 @@ sample_comment = 'Mystery Rad 1';
 save_folder = strcat(sample_name,'_',datestr(now,'mm-dd-yyyy-HH-MM-SS'));  % folder data will be saved to, uses timecode so no overwriting happens
 
 % Set IVT experiment parameters
-v_start = -2;           % V, start voltage
+v_start = -1;           % V, start voltage
 v_end = 1;              % V, end voltage
 v_step = 0.01;          % V, voltage step
 temp_init = 190.0;      % K, Initial temperature
@@ -40,7 +40,7 @@ pause(1);
 [connectionStatus, ID] = k.getConnectionStatus()
 pause(1);
 % set sweep measurement setSweepV(startVoltage,stopVoltage,stepSize,delay,integrationRate (optional),complianceLevel (optional, Amps),spacing (parameter))
-k.setSweepV(v_start,v_end,v_step,0,10,0.01);
+k.setSweepV(v_start,v_end,v_step,0,10,0.0005);
 
 current_temp = temp_init;
 current_num = 0;
