@@ -3,7 +3,7 @@ format long
 
 
 %%%%%%% Begin Main %%%%%%
-Folder_Name = '17R512-2 C8S14'
+Folder_Name = 'FGA015-Rad'
 %% File read code  % TODO: Clean up by moving to own function
 F_dir = strcat(Folder_Name, '\*_*.dat');
 F = dir(F_dir);
@@ -32,7 +32,7 @@ Temps = sort(Temps);
 %% Plotting
 color = jet(length(Data));
 
-% Capacitance plot
+% IVT plot
 figure
 for i = 1:length(Data)
     semilogy(Data{1,i}(:,1),abs(Data{1,i}(:,3)),'Color',color(i,:));
@@ -44,6 +44,27 @@ caxis([Temps(1) Temps(length(Temps))]);
 ylabel(h, 'Temperature (K)');
 xlabel('Voltage (V)','fontsize',14);
 ylabel('Current Density (mA/cm^2)','fontsize',14);
+hold off;
+
+% E_activation plot
+target_bias = -0.05; % volts
+kb = 8.617*10^-5; % Boltzmann
+inv_kbT = 1./(kb.*Temps);
+figure
+for i = 1:length(Data)
+    for j = 1:length(Data{1,i})
+        if Data{1,i}(j,1) == target_bias
+            Jplus = abs(Data{1,i}(j+1,3));
+            Jsame = abs(Data{1,i}(j,3));
+            Jminus = abs(Data{1,i}(j-1,3));
+            J(i) = mean([Jplus Jsame Jminus]);
+        end
+    end
+end
+y = J .* (inv_kbT.^2);
+scatter(inv_kbT,log(y));
+xlabel('(k_BT)^{-1}','fontsize',14);
+ylabel('Log[J/(k_BT)^{-2}]','fontsize',14);
 hold off;
 
 
