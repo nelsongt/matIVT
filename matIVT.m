@@ -1,27 +1,28 @@
 %%%% MATLAB I-V-T %%%%  Author:  George Nelson 2019
 
 % Set Sample Parameters
-sample_name = '17R512-2 C8S14';
-sample_size = 0.0025;  % Sample area in cm2
-sample_comment = 'Mystery Rad 1';
-save_folder = strcat(sample_name,'_',datestr(now,'mm-dd-yyyy-HH-MM-SS'));  % folder data will be saved to, uses timecode so no overwriting happens
+sample_name = 'GPD2-1MeV';
+sample_size = 0.001963;  % Sample area in cm2
+sample_comment = '1MeV 80deg F2';
 
 % Set IVT experiment parameters
-v_start = -1;           % V, start voltage
-v_end = 1;              % V, end voltage
+v_start = -4.0;           % V, start voltage
+v_end = 0.6;              % V, end voltage
 v_step = 0.01;          % V, voltage step
-temp_init = 190.0;      % K, Initial temperature
+i_compliance = 0.0001    % A, current compliance
+temp_init = 300;      % K, Initial temperature
 temp_step = 10;         % K, Measure at each temp step
-temp_final = 70;        % K, Ending temperature
-temp_idle = 200.0;      % K, Temp to set after experiment is over
-temp_stability = 0.2;   % K, Sets how close to the setpoint the temperature must be before collecting data (set point +- stability)
-time_stability = 20;    % s, How long must temperature be within temp_stability before collecting data, tests if PID settings overshoot set point, also useful if actual sample temp lags sensor temp
+temp_final = 180;       % K, Ending temperature
+temp_idle = 200;      % K, Temp to set after experiment is over
+temp_stability = 0.05;   %  K, Sets how close to the setpoint the temperature must be before collecting data (set point +- stability)
+time_stability = 25;    % s, How long must temperature be within temp_stability before collecting data, tests if PID settings overshoot set point, also useful if actual sample temp lags sensor temp
 
 %% MAIN %%
 
 % Init %
 % Setup PATH
 cd('.')
+save_folder = strcat(sample_name,'_',datestr(now,'mm-dd-yyyy-HH-MM-SS'));  % folder data will be saved to, uses timecode so no overwriting happens
 addpath(genpath('.\keithley\Common'))
 addpath(genpath('.\keithley\CommonDevice\Keithley'))
 addpath(genpath('.\lakeshore'))
@@ -40,7 +41,7 @@ pause(1);
 [connectionStatus, ID] = k.getConnectionStatus()
 pause(1);
 % set sweep measurement setSweepV(startVoltage,stopVoltage,stepSize,delay,integrationRate (optional),complianceLevel (optional, Amps),spacing (parameter))
-k.setSweepV(v_start,v_end,v_step,0,10,0.0005);
+k.setSweepV(v_start,v_end,v_step,0,10,i_compliance);
 
 current_temp = temp_init;
 current_num = 0;
@@ -55,8 +56,9 @@ while current_num <= steps
     temp_before = sampleSpaceTemperature;
 
     % measure sweep measureSweepV()
-    f.Sweep = figure('Position',[200,200,400,300]);
+    f.Sweep = figure('Position',[200,200,600,450]);
     ax.Sweep = axes('parent',f.Sweep);
+    set(ax.Sweep, 'YScale', 'log')
     dataSweepV = k.measureSweepV('plotHandle',ax.Sweep)
     k.setOutputState()
 
