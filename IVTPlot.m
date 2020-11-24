@@ -3,7 +3,7 @@ format long
 
 
 %%%%%%% Begin Main %%%%%%
-Folder_Name = 'FGA015-Rad'
+Folder_Name = 'GAP500-I_100keV'
 %% File read code  % TODO: Clean up by moving to own function
 F_dir = strcat(Folder_Name, '\*_*.dat');
 F = dir(F_dir);
@@ -47,7 +47,7 @@ ylabel('Current Density (mA/cm^2)','fontsize',14);
 hold off;
 
 % E_activation plot
-target_bias = -0.05; % volts
+target_bias = -1.0; % volts
 kb = 8.617*10^-5; % Boltzmann
 inv_kbT = 1./(kb.*Temps);
 figure
